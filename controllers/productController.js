@@ -18,26 +18,44 @@ var gateway = new braintree.BraintreeGateway({
 
 export const createProductController = async (req, res) => {
     try {
-      const { name, description, price, category, quantity, shipping } = req.fields;
+      const { name, description, price, discount, discountedPrice, category, quantity, shipping } = req.fields;
       const { photo } = req.files;
       //validation
       switch (true) {
         case !name:
-          return res.status(500).send({ error: "Name is Required" });
+          return res.status(200).send({success: false, message: "Name is Required" });
         case !description:
-          return res.status(500).send({ error: "Description is Required" });
+          return res.status(200).send({ success: false, message: "Description is Required" });
         case !price:
-          return res.status(500).send({ error: "Price is Required" });
+          return res.status(200).send({ success: false, message: "Price is Required" });
+        case !discount:
+          return res.status(200).send({ success: false, message: "Discount % is Required" });
+        case !discountedPrice:
+          return res.status(200).send({success: false, message: "Discounted Price is Required" });
         case !category:
-          return res.status(500).send({ error: "Category is Required" });
+          return res.status(200).send({ success: false, message:"Category is Required " });
         case !quantity:
-          return res.status(500).send({ error: "Quantity is Required" });
+          return res.status(200).send({ success: false, message: "Quantity is Required" });
         case photo && photo.size > 1000000:
           return res
             .status(500)
-            .send({ error: "photo is Required and should be less then 1mb" });
+            .send({ success: false, message: "photo is Required and should be less then 1mb" });
       }
-  
+      // Validate name length 
+      if (name.length < 3 || name.length > 30) {
+        return res.status(200).send({ 
+            success: false,
+            message: 'Name must be at least 3 characters and no longer than 30 character' 
+          });
+      }
+      // validate discount between 0 to 99
+      if (discount < 0 || discount > 99) {
+        return res.status(200).send({ success: false, message: "Discount must be between 0 and 99" });
+      }
+      // Validate the "quantity" field (must be at least 1)
+        if (quantity < 1) {
+          return res.status(200).send({ success: false, message: "Quantity must be at least 1" });
+        }
       const products = new productModel({ ...req.fields, slug:slugify(name) });
       if (photo) {
         products.photo.data = fs.readFileSync(photo.path);
@@ -66,12 +84,12 @@ export const createProductController = async (req, res) => {
         .find({})
         .populate("category")
         .select("-photo")
-        .limit(12)
+        .limit()
         .sort({ createdAt: -1 });
       res.status(200).send({
         success: true,
         counTotal: products.length,
-        message: "ALlProducts ",
+        message: "AllProducts ",
         products,
       });
     } catch (error) {
@@ -144,10 +162,10 @@ export const createProductController = async (req, res) => {
   //update product
   export const updateProductController = async (req, res) => {
     try {
-      const { name, description, price, category, quantity, shipping } =
+      const { name, description, price, discount, discountedPrice, category, quantity, shipping } =
         req.fields;
       const { photo } = req.files;
-      //alidation
+      //validation
       switch (true) {
         case !name:
           return res.status(500).send({ error: "Name is Required" });
@@ -155,15 +173,28 @@ export const createProductController = async (req, res) => {
           return res.status(500).send({ error: "Description is Required" });
         case !price:
           return res.status(500).send({ error: "Price is Required" });
+        case !discount:
+          return res.status(200).send({ success: false, message: "Discount % is Required and should be range 1 to 99" });
+        case !discountedPrice:
+          return res.status(200).send({success: false, message: "Discounted Price is Required" });
         case !category:
           return res.status(500).send({ error: "Category is Required" });
         case !quantity:
           return res.status(500).send({ error: "Quantity is Required" });
         case photo && photo.size > 1000000:
           return res
-            .status(500)
-            .send({ error: "photo is Required and should be less then 1mb" });
+            .status(200)
+            .send({ success:false,message: "photo is Required and should be less then 1mb" });
       }
+
+    // Validate name length 
+    if (name.length < 3 || name.length > 30) {
+      return res
+        .status(200).send({ 
+          success: false,
+          message: 'Name must be at least 3 characters and no longer than 30 character' 
+        });
+    }
   
       const products = await productModel.findByIdAndUpdate( req.params.pid, { ...req.fields, slug: slugify(name) }, { new: true }
       );
@@ -194,7 +225,7 @@ export const createProductController = async (req, res) => {
       const { checked, radio } = req.body;
       let args = {};
       if (checked.length > 0) args.category = checked;
-      if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+      if (radio.length) args.discountedPrice = { $gte: radio[0], $lte: radio[1] };
       const products = await productModel.find(args);
       res.status(200).send({
         success: true,
@@ -356,7 +387,7 @@ export const braintreePaymentController = async(req,res) =>{
         });
       }
 
-      total += product.price * item.quantity;
+      total += product.discountedPrice * item.quantity;
 
       // Reduce the product quantity
       product.quantity -= item.quantity;
@@ -441,6 +472,11 @@ export const checkCartItemsStockController = async (req, res) => {
       return res.status(400).json({ error: 'Some Products are out of stock , Remove them to Proceed' });
     }
 
+    res.status(200).send({
+      success: true,
+      productInCart,
+    });
+    
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });

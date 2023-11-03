@@ -41,8 +41,7 @@ export const registerController = async (req, res) => {
 
     // Validate password strength (e.g., at least 6 characters)
     if (password.length < 6) {
-      return res
-        .status(200).send({ 
+      return res.status(200).send({ 
           success: false,
           message: 'Password must be at least 6 characters long' 
         });
