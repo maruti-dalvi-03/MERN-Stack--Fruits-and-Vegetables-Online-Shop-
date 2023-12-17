@@ -1,0 +1,80 @@
+a{
+  color: white;
+}
+
+.dashboard-container{
+    display: flex;
+    min-height: 70vh;
+}
+
+.dashboard-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: fit-content;
+    margin: 20px auto;
+    scroll-behavior: smooth;
+}
+
+.dashboard-content .info{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+  margin-bottom: 5px;
+}
+  
+.dashboard-content .info i{
+  font-size: 21px;
+  color: rgb(70, 0, 128);
+}
+.dashboard-content .overview-container{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.dashboard-content .overview-container .rect{
+ 
+  border-radius: 12px;
+  height: 120px;
+    width: 200px;
+  
+  margin: 5px; padding: 5px;
+}
+.overview-container .users{
+  background-image: linear-gradient(to left bottom, #ff6200, #ff8841, #ffa972, #ffc9a3, #ffe7d8);
+}
+.overview-container .products{
+  background-image: linear-gradient(to left bottom, #00caff, #65d5fe, #91e0fe, #b6ebfe, #d8f5ff);
+}
+.overview-container .categories{
+  background-image: linear-gradient(to left bottom, #d100ff, #e15aff, #ee88ff, #f7b1ff, #fdd8ff);
+}
+.overview-container .orders{
+  background-image: linear-gradient(to left bottom, #00ff2a, #5eff6b, #8bff98, #b2ffbe, #d8ffe0);
+}
+.overview-container .rect .top{
+  display: flex;
+  justify-content: space-around;
+}
+.overview-container .rect .title{
+  font-size: 22px; font-weight: 500;
+} 
+.overview-container .rect span{
+  font-size: 28px;
+}
+.overview-container .rect .count{
+  text-align: center;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+@media (max-width: 868px){
+  .dashboard-content .overview-container .rect{
+    width: 150px; height: 100px;
+  }
+}

@@ -1,0 +1,50 @@
+.adminMenu-container{
+    display:flex;
+    width: min-content;
+    position: sticky;
+    margin-top: -5px;
+    z-index: 998;
+}
+
+.sidebar{
+    background: teal;
+    color: #fff;
+    height:auto;
+    min-height: 130vh;
+    width: 200px;
+    transition: all 0.5s;
+}
+.top_section{
+    display: flex;
+    align-items:center;
+    padding:20px 15px;
+}
+.adminMenu-container .title{
+    font-size: 25px;
+}
+.adminMenu-container .bars{
+    display: flex;
+    font-size: 25px;
+    margin-left: 50px;
+}
+.adminMenu-container .admin-links{
+    display: flex;
+    color: #fff;
+    padding: 10px 15px;
+    gap: 15px;
+    transition: all 0.5s;
+}
+ .admin-links:hover{
+    background:rgb(38, 168, 168);
+    color: #000;
+    transition: all 0.5s;
+}
+.active{
+    background: rgb(38, 168, 168);
+    padding: 5px;
+    border-radius: 5px;
+    color: #000;
+}
+.icon, .link_text{
+    font-size: 20px;
+}
